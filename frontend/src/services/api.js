@@ -1,0 +1,24 @@
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000,
+});
+
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    let message = 'Đã có lỗi xảy ra khi kết nối máy chủ';
+    if (error.response && error.response.data && error.response.data.message) {
+      message = error.response.data.message;
+    } else if (error.message) {
+      message = error.message;
+    }
+    return Promise.reject(new Error(message));
+  }
+);
+
+export default api;
